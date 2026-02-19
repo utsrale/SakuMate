@@ -1,0 +1,156 @@
+/* ========== Net Flow Card ========== */
+.net-flow-card {
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl) var(--space-lg);
+    color: white;
+    text-align: center;
+    margin-bottom: var(--space-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.net-flow-card.positive {
+    background: linear-gradient(135deg, #1dd1a1 0%, #00b894 100%);
+    box-shadow: 0 8px 24px rgba(29, 209, 161, 0.25);
+}
+
+.net-flow-card.negative {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    box-shadow: 0 8px 24px rgba(255, 107, 107, 0.25);
+}
+
+.nf-label {
+    font-size: var(--font-sm);
+    opacity: 0.85;
+    font-weight: 500;
+}
+
+.nf-amount {
+    font-size: var(--font-3xl);
+    font-weight: 800;
+    margin: var(--space-sm) 0 var(--space-xs);
+    letter-spacing: -1px;
+}
+
+.nf-sub {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+/* ========== Flow Bar ========== */
+.flow-bar-wrap {
+    margin-bottom: var(--space-lg);
+}
+
+.flow-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+}
+
+.flow-label-in {
+    color: var(--accent-success);
+}
+
+.flow-label-out {
+    color: var(--accent-danger);
+}
+
+.flow-bar {
+    height: 14px;
+    border-radius: 7px;
+    overflow: hidden;
+    display: flex;
+    background: var(--bg-input);
+}
+
+.flow-fill {
+    height: 100%;
+    transition: width 0.4s ease;
+}
+
+.income-fill {
+    background: var(--accent-success);
+}
+
+.expense-fill {
+    background: var(--accent-danger);
+}
+
+.flow-bar-amounts {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-sm);
+    font-size: var(--font-sm);
+    font-weight: 700;
+}
+
+/* ========== Breakdown List ========== */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.section-header h3 {
+    font-size: var(--font-md);
+    font-weight: 700;
+}
+
+.breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+}
+
+.breakdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.bi-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.bi-emoji {
+    font-size: 22px;
+    width: 32px;
+    text-align: center;
+}
+
+.bi-name {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.bi-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.bi-amount {
+    font-size: var(--font-sm);
+    font-weight: 700;
+}
+
+.bi-pct {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.income-val {
+    color: var(--accent-success);
+}
+
+.expense-val {
+    color: var(--accent-danger);
+}

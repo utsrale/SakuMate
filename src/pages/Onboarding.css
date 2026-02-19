@@ -1,0 +1,119 @@
+.onboarding-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-xl) var(--space-lg);
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+.onboarding-dots {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-2xl);
+    padding-top: var(--space-lg);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    width: 24px;
+    border-radius: 4px;
+    background: var(--accent-primary);
+}
+
+.dot.done {
+    background: var(--accent-success);
+}
+
+.onboarding-step {
+    width: 100%;
+    animation: fadeIn 0.4s ease;
+}
+
+.onboarding-hero {
+    text-align: center;
+    padding: var(--space-2xl) 0;
+}
+
+.hero-emoji {
+    font-size: 64px;
+    margin-bottom: var(--space-lg);
+    animation: pulse 2s infinite;
+}
+
+.hero-title {
+    font-size: var(--font-2xl);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: var(--space-md);
+}
+
+.brand-name {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-desc {
+    font-size: var(--font-md);
+    color: var(--text-secondary);
+    max-width: 300px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.btn-hero {
+    margin-top: var(--space-2xl);
+}
+
+.step-header {
+    margin-bottom: var(--space-xl);
+}
+
+.step-header h2 {
+    font-size: var(--font-xl);
+    font-weight: 700;
+}
+
+.step-desc {
+    color: var(--text-secondary);
+    font-size: var(--font-sm);
+}
+
+.nominal-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.nominal-prefix {
+    position: absolute;
+    left: var(--space-md);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: var(--font-sm);
+    pointer-events: none;
+}
+
+.nominal-input {
+    padding-left: 42px !important;
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-primary:disabled:hover {
+    transform: none;
+}

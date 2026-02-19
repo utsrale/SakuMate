@@ -1,0 +1,382 @@
+/* ========== Streak Widget ========== */
+.streak-widget {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    background: linear-gradient(135deg, #fff8f0, #fff3e0);
+    border: 1.5px solid rgba(253, 150, 68, 0.3);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-lg);
+    margin-bottom: var(--space-md);
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.streak-widget:hover {
+    transform: translateY(-1px);
+}
+
+.streak-fire {
+    font-size: 32px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.12);
+    }
+}
+
+.streak-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.streak-count {
+    font-size: var(--font-lg);
+    font-weight: 800;
+    color: #e17055;
+}
+
+.streak-label {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.streak-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: rgba(253, 150, 68, 0.1);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+}
+
+.streak-badge-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #e17055;
+}
+
+/* ========== Goals Preview ========== */
+.goals-preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+}
+
+.goal-preview-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.goal-preview-card:hover {
+    transform: translateX(2px);
+}
+
+.gp-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.gp-emoji {
+    font-size: 26px;
+    width: 32px;
+    text-align: center;
+}
+
+.gp-name {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.gp-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.gp-pct {
+    font-size: var(--font-sm);
+    font-weight: 800;
+    color: var(--accent-success);
+}
+
+.gp-saved {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* ========== Greeting ========== */
+.dash-greeting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+    padding-top: var(--space-sm);
+}
+
+.greeting-name {
+    font-size: var(--font-xl);
+    font-weight: 700;
+}
+
+.greeting-date {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    text-transform: capitalize;
+}
+
+.greeting-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ========== Balance Card ========== */
+.balance-card {
+    background: var(--gradient-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl) var(--space-lg);
+    color: white;
+    margin-bottom: var(--space-md);
+    box-shadow: 0 8px 32px rgba(0, 210, 211, 0.25);
+    text-align: center;
+}
+
+.balance-card.negative {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    box-shadow: 0 8px 32px rgba(255, 107, 107, 0.25);
+}
+
+.balance-label {
+    font-size: var(--font-sm);
+    opacity: 0.85;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.balance-amount {
+    font-size: var(--font-3xl);
+    font-weight: 800;
+    margin: var(--space-sm) 0 var(--space-xs);
+    letter-spacing: -1px;
+}
+
+.balance-subtitle {
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+/* ========== Month Summary ========== */
+.month-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    background: white;
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    box-shadow: var(--shadow-xs);
+}
+
+.summary-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.income-icon {
+    background: rgba(29, 209, 161, 0.12);
+    color: var(--accent-success);
+}
+
+.expense-icon {
+    background: rgba(255, 107, 107, 0.12);
+    color: var(--accent-danger);
+}
+
+.summary-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.summary-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.summary-value {
+    font-size: var(--font-sm);
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.income-val {
+    color: var(--accent-success);
+}
+
+.expense-val {
+    color: var(--accent-danger);
+}
+
+/* ========== Net Card ========== */
+.net-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-xl);
+    padding: var(--space-md) var(--space-lg);
+}
+
+.net-label {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.net-value {
+    font-size: var(--font-sm);
+    font-weight: 700;
+}
+
+.net-warning {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--accent-danger);
+    opacity: 0.8;
+}
+
+.net-positive .net-value {
+    color: var(--accent-success);
+}
+
+.net-negative .net-value {
+    color: var(--accent-danger);
+}
+
+/* ========== Section Header ========== */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.section-header h3 {
+    font-size: var(--font-md);
+    font-weight: 700;
+}
+
+.link-btn {
+    font-size: var(--font-sm);
+    color: var(--accent-primary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* ========== Activity ========== */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+}
+
+.activity-emoji {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255, 107, 107, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.activity-emoji.emoji-income {
+    background: rgba(29, 209, 161, 0.08);
+}
+
+.activity-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.activity-name {
+    font-size: var(--font-sm);
+    font-weight: 600;
+}
+
+.activity-note {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.activity-amount {
+    font-size: var(--font-sm);
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.income-amount {
+    color: var(--accent-success);
+}
+
+.expense-amount {
+    color: var(--accent-danger);
+}

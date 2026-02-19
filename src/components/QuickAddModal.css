@@ -1,0 +1,121 @@
+/* ========== Type Toggle ========== */
+.type-toggle {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    background: var(--bg-input);
+    border-radius: var(--radius-md);
+    padding: 4px;
+}
+
+.type-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-sm);
+    font-weight: 600;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.type-btn.active.expense {
+    background: white;
+    color: var(--accent-danger);
+    box-shadow: var(--shadow-sm);
+}
+
+.type-btn.active.income {
+    background: white;
+    color: var(--accent-success);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ========== Category Grid ========== */
+.cat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
+}
+
+.cat-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: var(--space-sm) var(--space-xs);
+    border-radius: var(--radius-md);
+    background: var(--bg-input);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.cat-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.cat-chip.selected {
+    transform: translateY(-2px);
+}
+
+.cat-emoji {
+    font-size: 22px;
+}
+
+.cat-name {
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* ========== Amount Input ========== */
+.amount-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.amount-prefix {
+    position: absolute;
+    left: var(--space-md);
+    color: var(--text-muted);
+    font-weight: 700;
+    pointer-events: none;
+}
+
+.amount-input {
+    padding-left: 40px !important;
+    font-size: var(--font-xl) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.5px;
+}
+
+.income-input:focus {
+    border-color: var(--accent-success) !important;
+    box-shadow: 0 0 0 3px rgba(29, 209, 161, 0.1) !important;
+}
+
+.expense-input:focus {
+    border-color: var(--accent-danger) !important;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1) !important;
+}
+
+.btn-income {
+    background: var(--accent-success) !important;
+    box-shadow: 0 4px 15px rgba(29, 209, 161, 0.35) !important;
+}
+
+.btn-primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+    pointer-events: none;
+}
