@@ -2,8 +2,16 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, isToday, isYesterday } from 'date-fns';
 import { id as localeId } from 'date-fns/locale';
-import { IoArrowBack, IoSearch, IoTrashOutline, IoArrowDown, IoArrowUp } from 'react-icons/io5';
-import { formatRupiah, getCategoryById, calculateBalance, getTotalIncome, getTotalExpense } from '../utils/predictionEngine';
+import {
+    IoArrowBack, IoSearch, IoTrashOutline,
+    IoCreateOutline, IoClose, IoArrowDown, IoArrowUp,
+} from 'react-icons/io5';
+import { WalletIcon } from '../components/WalletIcon';
+import {
+    formatRupiah, getCategoryById, calculateBalance,
+    getTotalIncome, getTotalExpense,
+    EXPENSE_CATEGORIES, INCOME_CATEGORIES,
+} from '../utils/predictionEngine';
 import './Transactions.css';
 
 const FILTERS = [
@@ -12,10 +20,26 @@ const FILTERS = [
     { id: 'expense', label: '↓ Keluar' },
 ];
 
-export default function Transactions({ transactions, removeTransaction }) {
+const fmt = (v) => {
+    const n = v.replace(/\D/g, '');
+    return n ? parseInt(n).toLocaleString('id-ID') : '';
+};
+
+export default function Transactions({ transactions, removeTransaction, updateTransaction, wallets = [] }) {
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('all');
+
+    // Edit modal state
+    const [editTx, setEditTx] = useState(null);
+    const [editKategori, setEditKategori] = useState('');
+    const [editNominal, setEditNominal] = useState('');
+    const [editCatatan, setEditCatatan] = useState('');
+    const [editType, setEditType] = useState('expense');
+    const [editWalletId, setEditWalletId] = useState('');
+
+    // Delete confirm state
+    const [confirmId, setConfirmId] = useState(null);
 
     const balance = useMemo(() => calculateBalance(transactions), [transactions]);
     const totalIn = useMemo(() => getTotalIncome(transactions), [transactions]);
@@ -49,6 +73,47 @@ export default function Transactions({ transactions, removeTransaction }) {
         if (isYesterday(d)) return 'Kemarin';
         return format(d, 'EEEE, dd MMMM', { locale: localeId });
     };
+
+    // Open edit modal
+    const openEdit = (tx) => {
+        setEditTx(tx);
+        setEditType(tx.type);
+        setEditKategori(tx.kategori);
+        setEditNominal(tx.nominal.toLocaleString('id-ID'));
+        setEditCatatan(tx.catatan || '');
+        setEditWalletId(tx.walletId || '');
+    };
+
+    const closeEdit = () => setEditTx(null);
+
+    const handleSaveEdit = async () => {
+        if (!editKategori || !editNominal) return;
+        await updateTransaction(editTx.id, {
+            type: editType,
+            kategori: editKategori,
+            nominal: parseInt(editNominal.replace(/\D/g, '')),
+            catatan: editCatatan.trim(),
+            walletId: editWalletId,
+        });
+        closeEdit();
+    };
+
+    const handleTypeSwitch = (t) => {
+        setEditType(t);
+        setEditKategori('');
+    };
+
+    // Delete with confirm
+    const handleDelete = (id) => setConfirmId(id);
+    const confirmDelete = async () => {
+        await removeTransaction(confirmId);
+        setConfirmId(null);
+    };
+
+    const editCategories = editType === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+    const isEditIncome = editType === 'income';
+
+    const getWallet = (id) => wallets.find(w => w.id === id);
 
     return (
         <div className="page-container tx-page">
@@ -132,19 +197,154 @@ export default function Transactions({ transactions, removeTransaction }) {
                                             <span className="tx-note">
                                                 {tx.catatan || format(new Date(tx.timestamp), 'HH:mm')}
                                             </span>
+                                            {getWallet(tx.walletId) && (
+                                                <span className="tx-wallet-badge" style={{ color: getWallet(tx.walletId).color }}>
+                                                    {getWallet(tx.walletId).icon} {getWallet(tx.walletId).name}
+                                                </span>
+                                            )}
                                         </div>
                                         <span className={`tx-amount ${isIncome ? 'income-val' : 'expense-val'}`}>
                                             {isIncome ? '+' : '-'}{formatRupiah(tx.nominal)}
                                         </span>
-                                        <button className="tx-del" onClick={() => removeTransaction(tx.id)}>
-                                            <IoTrashOutline />
-                                        </button>
+                                        <div className="tx-actions">
+                                            <button className="tx-edit" onClick={() => openEdit(tx)}>
+                                                <IoCreateOutline />
+                                            </button>
+                                            <button className="tx-del" onClick={() => handleDelete(tx.id)}>
+                                                <IoTrashOutline />
+                                            </button>
+                                        </div>
                                     </div>
                                 );
                             })}
                         </div>
                     </div>
                 ))
+            )}
+
+            {/* ===== DELETE CONFIRM MODAL ===== */}
+            {confirmId && (
+                <div className="modal-overlay" onClick={() => setConfirmId(null)}>
+                    <div className="confirm-modal" onClick={e => e.stopPropagation()}>
+                        <div className="confirm-icon">🗑️</div>
+                        <h3 className="confirm-title">Hapus Transaksi?</h3>
+                        <p className="confirm-desc">Transaksi ini akan dihapus permanen dan tidak bisa dikembalikan.</p>
+                        <div className="confirm-actions">
+                            <button className="btn-cancel" onClick={() => setConfirmId(null)}>Batal</button>
+                            <button className="btn-danger" onClick={confirmDelete}>Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ===== EDIT MODAL ===== */}
+            {editTx && (
+                <div className="modal-overlay" onClick={closeEdit}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3 className="modal-title">Edit Transaksi</h3>
+                            <button className="modal-close" onClick={closeEdit}><IoClose /></button>
+                        </div>
+
+                        {/* Type Toggle */}
+                        <div className="type-toggle">
+                            <button
+                                className={`type-btn ${!isEditIncome ? 'active expense' : ''}`}
+                                onClick={() => handleTypeSwitch('expense')}
+                            >
+                                <IoArrowDown /> Pengeluaran
+                            </button>
+                            <button
+                                className={`type-btn ${isEditIncome ? 'active income' : ''}`}
+                                onClick={() => handleTypeSwitch('income')}
+                            >
+                                <IoArrowUp /> Pemasukan
+                            </button>
+                        </div>
+
+                        {/* Wallet Selector */}
+                        {wallets.length > 0 && (
+                            <div className="form-group">
+                                <label className="label">Sumber Dana</label>
+                                <div className="wallet-selector">
+                                    {wallets.map(w => (
+                                        <button
+                                            key={w.id}
+                                            className={`wallet-chip ${editWalletId === w.id ? 'selected' : ''}`}
+                                            onClick={() => setEditWalletId(w.id)}
+                                            style={editWalletId === w.id ? {
+                                                background: `${w.color}20`,
+                                                borderColor: w.color,
+                                                color: w.color,
+                                            } : {}}
+                                        >
+                                            <span className="wallet-chip-icon"><WalletIcon icon={w.icon} size={16} /></span>
+                                            <span className="wallet-chip-name">{w.name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Category Grid */}
+                        <div className="form-group">
+                            <label className="label">Kategori</label>
+                            <div className="cat-grid">
+                                {editCategories.map(cat => (
+                                    <button
+                                        key={cat.id}
+                                        className={`cat-chip ${editKategori === cat.id ? 'selected' : ''}`}
+                                        onClick={() => setEditKategori(cat.id)}
+                                        style={editKategori === cat.id ? {
+                                            background: `${cat.color}20`,
+                                            borderColor: cat.color,
+                                            color: cat.color,
+                                        } : {}}
+                                    >
+                                        <span className="cat-emoji">{cat.emoji}</span>
+                                        <span className="cat-name">{cat.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Amount */}
+                        <div className="form-group">
+                            <label className="label">Nominal</label>
+                            <div className="amount-input-wrapper">
+                                <span className="amount-prefix">Rp</span>
+                                <input
+                                    className={`input-field amount-input ${isEditIncome ? 'income-input' : 'expense-input'}`}
+                                    type="text"
+                                    inputMode="numeric"
+                                    placeholder="50.000"
+                                    value={editNominal}
+                                    onChange={e => setEditNominal(fmt(e.target.value))}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Notes */}
+                        <div className="form-group">
+                            <label className="label">Catatan (opsional)</label>
+                            <input
+                                className="input-field"
+                                type="text"
+                                placeholder="Tambahkan catatan..."
+                                value={editCatatan}
+                                onChange={e => setEditCatatan(e.target.value)}
+                            />
+                        </div>
+
+                        <button
+                            className={`btn-primary ${isEditIncome ? 'btn-income' : ''}`}
+                            onClick={handleSaveEdit}
+                            disabled={!editKategori || !editNominal}
+                        >
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );

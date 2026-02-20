@@ -71,7 +71,7 @@ export default function Onboarding({ onComplete, setProfile }) {
                     </div>
 
                     <button className="btn-primary" onClick={handleFinish}>
-                        🎉 Mulai Catat!
+                        Mulai Catat
                     </button>
                 </div>
             )}

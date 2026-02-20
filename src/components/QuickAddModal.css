@@ -26,15 +26,64 @@
 }
 
 .type-btn.active.expense {
-    background: white;
+    background: var(--bg-card);
     color: var(--accent-danger);
     box-shadow: var(--shadow-sm);
 }
 
 .type-btn.active.income {
-    background: white;
+    background: var(--bg-card);
     color: var(--accent-success);
     box-shadow: var(--shadow-sm);
+}
+
+/* ========== Wallet Selector ========== */
+.wallet-selector {
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.wallet-selector::-webkit-scrollbar {
+    display: none;
+}
+
+.wallet-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: var(--bg-input);
+    border: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: var(--font-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.wallet-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.wallet-chip.selected {
+    transform: translateY(-1px);
+}
+
+.wallet-chip-icon {
+    font-size: 16px;
+}
+
+.wallet-chip-name {
+    font-size: 12px;
+    font-weight: 600;
 }
 
 /* ========== Category Grid ========== */
@@ -100,22 +149,114 @@
 
 .income-input:focus {
     border-color: var(--accent-success) !important;
-    box-shadow: 0 0 0 3px rgba(29, 209, 161, 0.1) !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
 }
 
 .expense-input:focus {
     border-color: var(--accent-danger) !important;
-    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }
 
 .btn-income {
     background: var(--accent-success) !important;
-    box-shadow: 0 4px 15px rgba(29, 209, 161, 0.35) !important;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
 }
 
-.btn-primary:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    box-shadow: none;
-    pointer-events: none;
+.wallet-chip.add-chip {
+    border: 2px dashed var(--bg-card-border);
+    background: none;
+    color: var(--text-muted);
+}
+
+.wallet-chip.add-chip.selected {
+    border-style: solid;
+    background: var(--accent-primary);
+    color: white;
+}
+
+/* ========== Quick Wallet Form ========== */
+.quick-wallet-form {
+    margin-top: var(--space-md);
+    padding: var(--space-md);
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    border-radius: var(--radius-md);
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.picker-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.mini-picker {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.mini-opt {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-input);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mini-opt.sel {
+    border-color: var(--accent-primary);
+    background: var(--bg-card);
+}
+
+.mini-color-opt {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mini-color-opt.sel {
+    border-color: white;
+    box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+.quick-wallet-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.btn-secondary {
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
 }

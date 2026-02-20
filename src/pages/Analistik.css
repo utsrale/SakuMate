@@ -1,3 +1,86 @@
+/* ========== Balance Projection ========== */
+.projection-card {
+    margin-bottom: var(--space-lg);
+}
+
+.projection-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.projection-title {
+    font-size: var(--font-md);
+    font-weight: 700;
+}
+
+.projection-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.projection-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(0, 210, 211, 0.12);
+    color: var(--accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.projection-input {
+    margin-bottom: var(--space-md) !important;
+}
+
+.projection-result {
+    border-top: 1px solid var(--bg-input);
+    padding-top: var(--space-md);
+}
+
+.projection-result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-sm);
+}
+
+.projection-label {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.projection-value {
+    font-size: var(--font-xl);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.projection-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+}
+
+.projection-disclaimer {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.projection-info {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    text-align: center;
+    padding: var(--space-sm) 0;
+}
+
 /* ========== Period Tabs ========== */
 .period-tabs {
     display: flex;
@@ -22,7 +105,7 @@
 }
 
 .period-tab.active {
-    background: white;
+    background: var(--bg-card);
     color: var(--text-primary);
     box-shadow: var(--shadow-sm);
 }
@@ -32,11 +115,12 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    background: white;
+    background: var(--bg-card);
     border-radius: var(--radius-md);
     padding: var(--space-lg);
     margin-bottom: var(--space-lg);
     box-shadow: var(--shadow-xs);
+    border: 1px solid var(--bg-input);
 }
 
 .stat-box {
@@ -67,26 +151,44 @@
     background: var(--bg-input);
 }
 
-/* ========== Chart ========== */
+/* ========== Chart Section ========== */
 .chart-section {
     margin-bottom: var(--space-lg);
+    padding: var(--space-lg);
+}
+
+.chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+}
+
+.chart-title {
+    font-size: var(--font-md);
+    font-weight: 700;
 }
 
 .chart-legend {
     display: flex;
     align-items: center;
+    gap: var(--space-md);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-secondary);
-    margin-bottom: var(--space-md);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .legend-dot {
     display: inline-block;
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    margin-right: 4px;
 }
 
 .income-dot {
@@ -98,7 +200,44 @@
 }
 
 .bar-wrapper {
-    height: 160px;
+    height: 200px;
+}
+
+/* ========== Doughnut Section ========== */
+.donut-section {
+    margin-bottom: var(--space-lg);
+    padding: var(--space-lg);
+}
+
+.donut-wrapper {
+    position: relative;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.donut-center {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    pointer-events: none;
+}
+
+.donut-total-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.donut-total-value {
+    font-size: var(--font-md);
+    font-weight: 800;
+    color: var(--text-primary);
 }
 
 /* ========== Type Filter ========== */
@@ -154,18 +293,25 @@
     font-size: 20px;
 }
 
-.icon-income {
-    background: rgba(29, 209, 161, 0.1);
-}
-
-.icon-expense {
-    background: rgba(255, 107, 107, 0.1);
-}
-
 .cat-row-name {
     font-size: var(--font-sm);
     font-weight: 600;
     display: block;
+}
+
+.cat-progress-bar {
+    width: 100px;
+    height: 4px;
+    background: var(--bg-input);
+    border-radius: 2px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.cat-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .cat-row-right {

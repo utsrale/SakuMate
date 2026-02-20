@@ -3,8 +3,8 @@
     display: flex;
     align-items: center;
     gap: var(--space-md);
-    background: linear-gradient(135deg, #fff8f0, #fff3e0);
-    border: 1.5px solid rgba(253, 150, 68, 0.3);
+    background: var(--bg-card);
+    border: 1px solid var(--bg-input);
     border-radius: var(--radius-md);
     padding: var(--space-md) var(--space-lg);
     margin-bottom: var(--space-md);
@@ -42,7 +42,7 @@
 .streak-count {
     font-size: var(--font-lg);
     font-weight: 800;
-    color: #e17055;
+    color: #f59e0b;
 }
 
 .streak-label {
@@ -55,7 +55,7 @@
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    background: rgba(253, 150, 68, 0.1);
+    background: rgba(245, 158, 11, 0.1);
     border-radius: var(--radius-sm);
     padding: 4px 10px;
 }
@@ -63,7 +63,7 @@
 .streak-badge-label {
     font-size: 10px;
     font-weight: 700;
-    color: #e17055;
+    color: #f59e0b;
 }
 
 /* ========== Goals Preview ========== */
@@ -156,18 +156,44 @@
 
 /* ========== Balance Card ========== */
 .balance-card {
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, #312e81 0%, #4338ca 40%, #6366f1 100%);
     border-radius: var(--radius-lg);
     padding: var(--space-xl) var(--space-lg);
     color: white;
     margin-bottom: var(--space-md);
-    box-shadow: 0 8px 32px rgba(0, 210, 211, 0.25);
+    box-shadow: 0 8px 28px rgba(99, 102, 241, 0.25);
     text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.balance-card::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -25%;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+}
+
+.balance-card::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -15%;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    pointer-events: none;
 }
 
 .balance-card.negative {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-    box-shadow: 0 8px 32px rgba(255, 107, 107, 0.25);
+    background: linear-gradient(135deg, #991b1b 0%, #dc2626 50%, #ef4444 100%);
+    box-shadow: 0 8px 28px rgba(239, 68, 68, 0.2);
 }
 
 .balance-label {
@@ -191,6 +217,100 @@
 }
 
 /* ========== Month Summary ========== */
+/* ========== Wallet Breakdown ========== */
+.wallet-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.wallet-list-title {
+    font-size: var(--font-sm);
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-left: var(--space-xs);
+}
+
+.wallet-cards-container {
+    display: flex;
+    gap: var(--space-md);
+    overflow-x: auto;
+    padding: 0 var(--space-md) var(--space-md) var(--space-md);
+    margin: 0 calc(-1 * var(--space-md));
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* Hide scrollbar but keep functionality */
+.wallet-cards-container::-webkit-scrollbar {
+    display: none;
+}
+
+.wallet-card {
+    min-width: 150px;
+    height: 100px;
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+}
+
+.wallet-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.wallet-card::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -20%;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.wallet-card-icon {
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    border-radius: 10px;
+}
+
+.wallet-card-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.wallet-card-name {
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.9;
+    letter-spacing: 0.5px;
+}
+
+.wallet-card-bal {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
 .month-summary {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -202,10 +322,11 @@
     display: flex;
     align-items: center;
     gap: var(--space-sm);
-    background: white;
+    background: var(--bg-card);
     border-radius: var(--radius-md);
     padding: var(--space-md);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--bg-input);
 }
 
 .summary-icon {
@@ -220,12 +341,12 @@
 }
 
 .income-icon {
-    background: rgba(29, 209, 161, 0.12);
+    background: rgba(16, 185, 129, 0.12);
     color: var(--accent-success);
 }
 
 .expense-icon {
-    background: rgba(255, 107, 107, 0.12);
+    background: rgba(239, 68, 68, 0.10);
     color: var(--accent-danger);
 }
 
@@ -344,7 +465,7 @@
 }
 
 .activity-emoji.emoji-income {
-    background: rgba(29, 209, 161, 0.08);
+    background: rgba(16, 185, 129, 0.08);
 }
 
 .activity-info {

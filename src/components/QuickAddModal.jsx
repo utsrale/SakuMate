@@ -1,14 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { IoClose, IoArrowDown, IoArrowUp } from 'react-icons/io5';
+import { IoClose, IoArrowDown, IoArrowUp, IoAdd } from 'react-icons/io5';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '../utils/predictionEngine';
+import { WALLET_ICONS, WALLET_COLORS } from '../db';
+import { WalletIcon, WALLET_ICON_MAP } from '../components/WalletIcon';
 import './QuickAddModal.css';
 
-export default function QuickAddModal({ isOpen, onClose, onAdd }) {
+export default function QuickAddModal({ isOpen, onClose, onAdd, wallets = [], defaultWalletId, addWallet, showToast }) {
     const [type, setType] = useState('expense');
     const [kategori, setKategori] = useState('');
     const [nominal, setNominal] = useState('');
     const [catatan, setCatatan] = useState('');
+    const [walletId, setWalletId] = useState(defaultWalletId || '');
+
+    // Quick add wallet state
+    const [isAddingWallet, setIsAddingWallet] = useState(false);
+    const [newWName, setNewWName] = useState('');
+    const [newWIcon, setNewWIcon] = useState(WALLET_ICONS[0]);
+    const [newWColor, setNewWColor] = useState(WALLET_COLORS[0]);
+
+    // Sync default wallet when it changes
+    useEffect(() => {
+        if (defaultWalletId && !walletId) {
+            setWalletId(defaultWalletId);
+        }
+    }, [defaultWalletId]);
 
     const fmt = (v) => {
         const n = v.replace(/\D/g, '');
@@ -30,6 +46,7 @@ export default function QuickAddModal({ isOpen, onClose, onAdd }) {
             kategori,
             nominal: parseInt(nominal.replace(/\D/g, '')),
             catatan: catatan.trim(),
+            walletId: walletId || defaultWalletId,
             timestamp: new Date().toISOString(),
         });
         // Reset
@@ -37,7 +54,22 @@ export default function QuickAddModal({ isOpen, onClose, onAdd }) {
         setKategori('');
         setNominal('');
         setCatatan('');
+        setWalletId(defaultWalletId || '');
+        setIsAddingWallet(false);
         onClose();
+    };
+
+    const handleQuickAddWallet = async () => {
+        if (!newWName) return;
+        const newId = await addWallet({
+            name: newWName,
+            icon: newWIcon,
+            color: newWColor
+        });
+        setWalletId(newId);
+        setIsAddingWallet(false);
+        setNewWName('');
+        if (showToast) showToast('Wallet Ditambah!', `"${newWName}" siap digunakan`, 'success');
     };
 
     if (!isOpen) return null;
@@ -68,6 +100,81 @@ export default function QuickAddModal({ isOpen, onClose, onAdd }) {
                         <IoArrowUp /> Pemasukan
                     </button>
                 </div>
+
+                {/* Wallet Selector */}
+                {wallets.length > 0 && (
+                    <div className="form-group">
+                        <label className="label">Sumber Dana</label>
+                        <div className="wallet-selector">
+                            {wallets.map(w => (
+                                <button
+                                    key={w.id}
+                                    className={`wallet-chip ${walletId === w.id ? 'selected' : ''}`}
+                                    onClick={() => {
+                                        setWalletId(w.id);
+                                        setIsAddingWallet(false);
+                                    }}
+                                    style={walletId === w.id ? {
+                                        background: `${w.color}20`,
+                                        borderColor: w.color,
+                                        color: w.color,
+                                    } : {}}
+                                >
+                                    <span className="wallet-chip-icon"><WalletIcon icon={w.icon} size={16} /></span>
+                                    <span className="wallet-chip-name">{w.name}</span>
+                                </button>
+                            ))}
+                            <button
+                                className={`wallet-chip add-chip ${isAddingWallet ? 'selected' : ''}`}
+                                onClick={() => setIsAddingWallet(!isAddingWallet)}
+                            >
+                                <IoAdd /> Baru
+                            </button>
+                        </div>
+
+                        {isAddingWallet && (
+                            <div className="quick-wallet-form card">
+                                <div className="form-group">
+                                    <input
+                                        className="input-field"
+                                        value={newWName}
+                                        onChange={e => setNewWName(e.target.value)}
+                                        placeholder="Nama dompet baru..."
+                                        autoFocus
+                                    />
+                                </div>
+                                <div className="picker-row">
+                                    <div className="mini-picker">
+                                        {WALLET_ICONS.slice(0, 8).map(ic => (
+                                            <button
+                                                key={ic}
+                                                className={`mini-opt ${newWIcon === ic ? 'sel' : ''}`}
+                                                onClick={() => setNewWIcon(ic)}
+                                                title={WALLET_ICON_MAP[ic]?.label}
+                                            >
+                                                <WalletIcon icon={ic} size={16} />
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <div className="mini-picker">
+                                        {WALLET_COLORS.slice(0, 6).map(c => (
+                                            <button
+                                                key={c}
+                                                className={`mini-color-opt ${newWColor === c ? 'sel' : ''}`}
+                                                onClick={() => setNewWColor(c)}
+                                                style={{ background: c }}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="quick-wallet-actions">
+                                    <button className="btn-secondary btn-sm" onClick={() => setIsAddingWallet(false)}>Batal</button>
+                                    <button className="btn-primary btn-sm" onClick={handleQuickAddWallet} disabled={!newWName}>Tambah</button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Category Grid */}
                 <div className="form-group">

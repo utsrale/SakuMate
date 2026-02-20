@@ -154,11 +154,11 @@
 }
 
 .tx-emoji-income {
-    background: rgba(29, 209, 161, 0.1);
+    background: rgba(16, 185, 129, 0.1);
 }
 
 .tx-emoji-expense {
-    background: rgba(255, 107, 107, 0.1);
+    background: rgba(239, 68, 68, 0.08);
 }
 
 .tx-info {
@@ -187,12 +187,12 @@
 }
 
 .badge-income {
-    background: rgba(29, 209, 161, 0.12);
+    background: rgba(16, 185, 129, 0.12);
     color: var(--accent-success);
 }
 
 .badge-expense {
-    background: rgba(255, 107, 107, 0.12);
+    background: rgba(239, 68, 68, 0.10);
     color: var(--accent-danger);
 }
 
@@ -224,6 +224,105 @@
 }
 
 .tx-del:hover {
-    background: #ffecec;
+    background: rgba(239, 68, 68, 0.10);
     color: var(--accent-danger);
+}
+
+/* Wallet badge on transaction item */
+.tx-wallet-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 2px;
+    opacity: 0.8;
+}
+
+.tx-edit {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: all 0.15s;
+}
+
+.tx-edit:hover {
+    background: rgba(99, 102, 241, 0.10);
+    color: var(--accent-primary);
+}
+
+.tx-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* ========== Confirm Modal ========== */
+.confirm-modal {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+    width: 100%;
+    max-width: var(--max-width);
+    animation: slideUp 0.25s ease;
+    text-align: center;
+}
+
+.confirm-icon {
+    font-size: 40px;
+    margin-bottom: var(--space-md);
+}
+
+.confirm-title {
+    font-size: var(--font-lg);
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+}
+
+.confirm-desc {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xl);
+    line-height: 1.6;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: var(--space-md);
+}
+
+.btn-cancel {
+    flex: 1;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
+    font-weight: 600;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.btn-danger {
+    flex: 1;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
+    font-weight: 700;
+    background: var(--accent-danger);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.btn-danger:hover {
+    opacity: 0.85;
 }

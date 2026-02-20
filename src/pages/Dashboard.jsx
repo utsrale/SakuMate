@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { IoChevronForward, IoArrowUp, IoArrowDown, IoTrophyOutline } from 'react-icons/io5';
+import { IoChevronForward, IoArrowUp, IoArrowDown, IoTrophyOutline, IoRefresh } from 'react-icons/io5';
 import {
     calculateBalance,
     getTotalIncome,
@@ -11,6 +11,8 @@ import {
     formatRupiah,
     getCategoryById,
 } from '../utils/predictionEngine';
+import { db } from '../db';
+import { WalletIcon } from '../components/WalletIcon';
 import './Dashboard.css';
 
 const STREAK_MILESTONES = [
@@ -24,7 +26,7 @@ function getMilestone(count) {
     return STREAK_MILESTONES.find(m => count >= m.days) || null;
 }
 
-export default function Dashboard({ profile, transactions, goals, streak, showToast }) {
+export default function Dashboard({ profile, transactions, goals, streak, wallets = [], showToast }) {
     const navigate = useNavigate();
 
     const monthTx = useMemo(() => filterByPeriod(transactions, 'month'), [transactions]);
@@ -43,12 +45,23 @@ export default function Dashboard({ profile, transactions, goals, streak, showTo
 
     const milestone = getMilestone(streak?.count || 0);
 
+    // Wallet balances
+    const walletBalances = useMemo(() => {
+        // Debug
+        console.log("Dashboard wallets:", wallets);
+        return wallets.map(w => {
+            const wTx = transactions.filter(tx => tx.walletId === w.id);
+            const bal = calculateBalance(wTx);
+            return { ...w, balance: bal };
+        });
+    }, [wallets, transactions]);
+
     return (
         <div className="page-container">
             {/* Greeting */}
             <div className="dash-greeting">
                 <div>
-                    <h1 className="greeting-name">Halo, {profile.nama} 👋</h1>
+                    <h1 className="greeting-name">Halo, {profile.nama}</h1>
                     <p className="greeting-date">{todayStr}</p>
                 </div>
                 <div className="greeting-avatar">{profile.avatarEmoji || '😊'}</div>
@@ -84,6 +97,61 @@ export default function Dashboard({ profile, transactions, goals, streak, showTo
                 <p className="balance-subtitle">Dari semua pemasukan & pengeluaran</p>
             </div>
 
+            {/* Wallet Breakdown */}
+            {walletBalances.length > 0 && (
+                <div className="wallet-breakdown">
+                    <div className="section-header" style={{ marginBottom: '8px' }}>
+                        <h3 className="wallet-list-title">Dompet Saya</h3>
+                        <button
+                            className="link-btn"
+                            style={{ fontSize: '11px', color: 'var(--text-muted)' }}
+                            onClick={async () => {
+                                if (confirm('Perbaiki duplikat wallet?')) {
+                                    const allWallets = await db.wallets.toArray();
+                                    const groups = {};
+                                    for (const w of allWallets) {
+                                        if (!groups[w.name]) groups[w.name] = [];
+                                        groups[w.name].push(w);
+                                    }
+                                    for (const name in groups) {
+                                        const group = groups[name];
+                                        if (group.length > 1) {
+                                            group.sort((a, b) => a.id - b.id);
+                                            const master = group[0];
+                                            for (let i = 1; i < group.length; i++) {
+                                                const v = group[i];
+                                                await db.transactions.where('walletId').equals(v.id).modify({ walletId: master.id });
+                                                await db.wallets.delete(v.id);
+                                            }
+                                        }
+                                    }
+                                    window.location.reload();
+                                }
+                            }}
+                            title="Repair duplicate wallets"
+                        >
+                            <IoRefresh size={14} style={{ marginRight: '4px' }} /> Perbaiki
+                        </button>
+                    </div>
+                    <div className="wallet-cards-container">
+                        {walletBalances.map(w => (
+                            <div key={w.id} className="wallet-card" style={{
+                                background: `linear-gradient(135deg, ${w.color}22 0%, ${w.color}44 100%)`,
+                                borderLeft: `4px solid ${w.color}`
+                            }}>
+                                <div className="wallet-card-icon" style={{ color: w.color }}><WalletIcon icon={w.icon} size={22} /></div>
+                                <div className="wallet-card-info">
+                                    <span className="wallet-card-name" style={{ color: w.color }}>{w.name}</span>
+                                    <span className={`wallet-card-bal ${w.balance >= 0 ? 'income-val' : 'expense-val'}`}>
+                                        {formatRupiah(w.balance)}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Month Summary */}
             <div className="month-summary">
                 <div className="summary-card">
@@ -106,7 +174,7 @@ export default function Dashboard({ profile, transactions, goals, streak, showTo
             <div className={`net-card card ${monthNet >= 0 ? 'net-positive' : 'net-negative'}`}>
                 <span className="net-label">Net Bulan Ini</span>
                 <span className="net-value">
-                    {monthNet >= 0 ? '📈' : '📉'} {monthNet >= 0 ? '+' : ''}{formatRupiah(Math.abs(monthNet))}
+                    {monthNet >= 0 ? '+' : ''}{formatRupiah(Math.abs(monthNet))}
                 </span>
             </div>
 
@@ -114,7 +182,7 @@ export default function Dashboard({ profile, transactions, goals, streak, showTo
             {activeGoals.length > 0 && (
                 <>
                     <div className="section-header">
-                        <h3>🎯 Target Tabungan</h3>
+                        <h3>Target Tabungan</h3>
                         <button className="link-btn" onClick={() => navigate('/goals')}>
                             Lihat Semua <IoChevronForward />
                         </button>
@@ -147,7 +215,7 @@ export default function Dashboard({ profile, transactions, goals, streak, showTo
             {/* Recent Activity */}
             <div className="section-header">
                 <h3>Aktivitas Terakhir</h3>
-                {transactions.length > 5 && (
+                {transactions.length > 0 && (
                     <button className="link-btn" onClick={() => navigate('/transactions')}>
                         Lihat Semua <IoChevronForward />
                     </button>
@@ -157,7 +225,7 @@ export default function Dashboard({ profile, transactions, goals, streak, showTo
             {recentTx.length === 0 ? (
                 <div className="empty-state card">
                     <span className="empty-state-icon">✏️</span>
-                    <p className="empty-state-text">Tap ➕ untuk mulai mencatat transaksi pertamamu!</p>
+                    <p className="empty-state-text">Mulai catat transaksi pertamamu dengan tombol + di bawah</p>
                 </div>
             ) : (
                 <div className="activity-list">

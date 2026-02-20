@@ -1,8 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db';
-import { v4 as uuidv4 } from 'uuid';
+import { db, DEFAULT_WALLETS } from '../db';
 import { format } from 'date-fns';
+
+// ==================== DARK MODE ====================
+const DARK_KEY = 'sakumate_dark_mode';
+
+export function useDarkMode() {
+    const [darkMode, setDarkMode] = useState(() => {
+        return localStorage.getItem(DARK_KEY) === 'true';
+    });
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+        localStorage.setItem(DARK_KEY, darkMode);
+    }, [darkMode]);
+
+    // Apply on first load
+    useEffect(() => {
+        const saved = localStorage.getItem(DARK_KEY) === 'true';
+        document.documentElement.setAttribute('data-theme', saved ? 'dark' : 'light');
+    }, []);
+
+    const toggleDarkMode = () => setDarkMode(prev => !prev);
+
+    return { darkMode, toggleDarkMode };
+}
+
 
 // ==================== PROFILE ====================
 const DEFAULT_PROFILE = {
@@ -41,11 +65,97 @@ export function useTransactions() {
         await db.transactions.delete(id);
     };
 
+    const updateTransaction = async (id, changes) => {
+        await db.transactions.update(id, changes);
+    };
+
     const clearTransactions = async () => {
         await db.transactions.clear();
     };
 
-    return { transactions, addTransaction, removeTransaction, clearTransactions };
+    return { transactions, addTransaction, removeTransaction, updateTransaction, clearTransactions };
+}
+
+// ==================== WALLETS ====================
+export function useWallets() {
+    const wallets = useLiveQuery(() => db.wallets.orderBy('order').toArray()) || [];
+
+    // Auto-seed and Deduplicate (Enhanced)
+    useEffect(() => {
+        (async () => {
+            try {
+                // 1. Check for duplicates
+                const allWallets = await db.wallets.toArray();
+                const groups = {};
+
+                // Group by name
+                for (const w of allWallets) {
+                    if (!groups[w.name]) groups[w.name] = [];
+                    groups[w.name].push(w);
+                }
+
+                // Process groups with duplicates
+                for (const name in groups) {
+                    const group = groups[name];
+                    if (group.length > 1) {
+                        // Sort: ID 1 first, then Default, then older IDs
+                        group.sort((a, b) => {
+                            if (a.id === 1) return -1;
+                            if (b.id === 1) return 1;
+                            if (a.isDefault && !b.isDefault) return -1;
+                            if (!a.isDefault && b.isDefault) return 1;
+                            return a.id - b.id;
+                        });
+
+                        const master = group[0];
+                        const victims = group.slice(1);
+
+                        await db.transaction('rw', db.wallets, db.transactions, async () => {
+                            for (const v of victims) {
+                                // Move transactions to master
+                                await db.transactions.where('walletId').equals(v.id).modify({ walletId: master.id });
+                                // Delete victim
+                                await db.wallets.delete(v.id);
+                            }
+                        });
+                    }
+                }
+
+                // 2. Seed if empty
+                const count = await db.wallets.count();
+                if (count === 0) {
+                    await db.wallets.bulkAdd(DEFAULT_WALLETS);
+                }
+            } catch (error) {
+                console.error("Wallet deduplication failed:", error);
+            }
+        })();
+    }, []);
+
+    const addWallet = async (wallet) => {
+        const maxOrder = wallets.length > 0 ? Math.max(...wallets.map(w => w.order || 0)) + 1 : 0;
+        return await db.wallets.add({ ...wallet, isDefault: false, order: maxOrder });
+    };
+
+    const updateWallet = async (id, changes) => {
+        await db.wallets.update(id, changes);
+    };
+
+    const removeWallet = async (id) => {
+        // Move transactions from deleted wallet to the default wallet
+        const defaultWallet = wallets.find(w => w.isDefault);
+        if (defaultWallet && defaultWallet.id !== id) {
+            await db.transactions.where('walletId').equals(id).modify({ walletId: defaultWallet.id });
+        }
+        await db.wallets.delete(id);
+    };
+
+    const getDefaultWalletId = () => {
+        const def = wallets.find(w => w.isDefault);
+        return def ? def.id : (wallets[0]?.id || null);
+    };
+
+    return { wallets, addWallet, updateWallet, removeWallet, getDefaultWalletId };
 }
 
 // ==================== SAVING GOALS ====================
@@ -137,13 +247,19 @@ export function useOnboarding() {
         localStorage.setItem('sakumate_onboarded', 'true');
     };
 
-    const resetOnboarding = () => {
+    const resetOnboarding = async () => {
         setIsOnboarded(false);
         localStorage.removeItem('sakumate_onboarded');
         localStorage.removeItem(STREAK_KEY);
-        db.transactions.clear();
-        db.profile.clear();
-        db.savingGoals.clear();
+
+        await db.transaction('rw', db.transactions, db.profile, db.savingGoals, db.wallets, async () => {
+            await db.transactions.clear();
+            await db.profile.clear();
+            await db.savingGoals.clear();
+            await db.wallets.clear();
+            // Re-seed wallets immediately so the app is not empty on next start
+            await db.wallets.bulkAdd(DEFAULT_WALLETS);
+        });
     };
 
     return { isOnboarded, completeOnboarding, resetOnboarding };

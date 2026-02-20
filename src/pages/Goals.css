@@ -9,7 +9,7 @@
     align-items: center;
     justify-content: center;
     font-size: 22px;
-    box-shadow: 0 4px 12px rgba(0, 210, 211, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 211, 211, 0.463);
     transition: transform 0.15s;
 }
 
